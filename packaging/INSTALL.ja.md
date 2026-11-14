@@ -9,7 +9,8 @@ hostdiary は、1台の Linux サーバの CPU・メモリ・ディスク・ネ�
 | ファイル | 内容 |
 |---|---|
 | `hostdiary` | 実行ファイル(1つで完結。ほかに入れるものはない) |
-| `INSTALL.ja.md` | この手順書 |
+| `INSTALL.md` | 英語の手順書(正本) |
+| `INSTALL.ja.md` | この手順書(英語版の日本語訳) |
 | `config.example.json` | 設定ファイルの例 |
 | `nginx-hostdiary.conf.example` | nginx の Basic 認証の内側で画面を見せる設定例 |
 | `README.md`・`LICENSE` | 仕様の説明(英語)とライセンス(MIT) |
@@ -23,17 +24,17 @@ hostdiary は、1台の Linux サーバの CPU・メモリ・ディスク・ネ�
 
 ```sh
 . /etc/os-release && echo "$PRETTY_NAME"
-uname -m                    # x86_64 なら amd64 版、aarch64 なら arm64 版
-ps -p 1 -o comm=            # systemd と出ること
+uname -m                    # x86_64: amd64 archive; aarch64: arm64 archive
+ps -p 1 -o comm=            # Must print systemd
 ```
 
 ## 2. 展開して中身を確かめる
 
 ```sh
-tar -xzf hostdiary-<版>-linux-<amd64|arm64>.tar.gz
-cd hostdiary-<版>-linux-<amd64|arm64>
-sha256sum -c SHA256SUMS     # すべて OK と出ること
-./hostdiary --version       # 版が出ること
+tar -xzf hostdiary-<version>-linux-<amd64|arm64>.tar.gz
+cd hostdiary-<version>-linux-<amd64|arm64>
+sha256sum -c SHA256SUMS     # All entries must report OK
+./hostdiary --version       # Must print the version
 ```
 
 配布物そのものの SHA-256 を受け取っている場合は、展開の前に `sha256sum <配布物>` で照らし合わせてください。
@@ -76,9 +77,9 @@ dirs timer: enabled=enabled, active=active
 ## 5. 動作を確かめる
 
 ```sh
-systemctl list-timers 'hostdiary-*.timer'     # collect は毎分、dirs は毎朝 04:30 ごろ
-systemctl is-failed hostdiary-collect.service # inactive なら失敗していない
-ls /var/lib/hostdiary/public/                 # index.html・index.json・data/ などがある
+systemctl list-timers 'hostdiary-*.timer'     # collect: every minute; dirs: around 04:30 every morning
+systemctl is-failed hostdiary-collect.service # inactive means it has not failed
+ls /var/lib/hostdiary/public/                 # Contains index.html, index.json, data/, etc.
 ```
 
 ディレクトリ容量を今すぐ測るときは `sudo systemctl start hostdiary-dirs.service`。

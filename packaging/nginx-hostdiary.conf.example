@@ -1,8 +1,8 @@
-# hostdiary を nginx の Basic 認証の内側で見せる設定例。
-# 既存の HTTPS の server { ... } の中に置く(または include する)。
-# パスワードファイルは公開する木の外に、普段の手順で作る。
-# ここで add_header を書くと、親(server・http)の add_header は引き継がれない。
-# HSTS など server で付けているヘッダーがあれば、ここにも書き足す。
+# Example: serve hostdiary behind nginx Basic authentication.
+# Place this inside an existing HTTPS server { ... } block (or include it).
+# Create the password file outside the served tree using your usual procedure.
+# Defining add_header here prevents inheritance of add_header from server/http.
+# Repeat any headers set at server level here, such as HSTS.
 
 location = /hostdiary {
     return 308 /hostdiary/;

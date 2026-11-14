@@ -1,5 +1,7 @@
 # hostdiary
 
+日本語のインストール手順は `packaging/INSTALL.ja.md`(配布物では `INSTALL.ja.md`)にあります。
+
 A resource diary for one Linux host: minute-by-minute measurements, daily summaries,
 and browser graphs. A short-lived collector reads procfs every minute and appends
 public time-series files. People browse HotSaNIC-style overview graphs; AI-first
@@ -34,7 +36,7 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o hostdiary ./cmd/hostdiary
 
 To make distribution archives, run `scripts/package.sh`. It writes
 `dist/hostdiary-<version>-linux-amd64.tar.gz` and `-linux-arm64.tar.gz`, each
-containing the executable, a Japanese installation guide (`INSTALL.ja.md`, from
+containing the executable, English and Japanese installation guides (`INSTALL.md` and `INSTALL.ja.md`, from
 `packaging/`), configuration and nginx examples, this README, the license and
 `SHA256SUMS`, plus `dist/SHA256SUMS` for the archives.
 

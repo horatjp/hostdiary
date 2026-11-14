@@ -2,7 +2,7 @@
 # package.sh — 配布物(tar.gz)を作る
 #
 # 何を: linux/amd64 と linux/arm64 を別々にビルドし、CPU の種類ごとに
-#       dist/hostdiary-<版>-linux-<arch>.tar.gz を作る。中身は実行ファイル・日本語の手順書・
+#       dist/hostdiary-<版>-linux-<arch>.tar.gz を作る。中身は実行ファイル・英語と日本語の手順書・
 #       設定例・nginx 例・README・LICENSE・SHA256SUMS。dist/SHA256SUMS に配布物の SHA-256 を書く。
 # なぜ: ほかのサーバに入れるとき、展開して手順書どおりに入れれば済むようにする
 #       (change release-package)。
@@ -32,11 +32,11 @@ for arch in amd64 arm64; do
   mkdir -p "$dir"
   CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath -o "$dir/hostdiary" ./cmd/hostdiary
   chmod 0755 "$dir/hostdiary"
-  cp packaging/INSTALL.ja.md packaging/config.example.json packaging/nginx-hostdiary.conf.example \
+  cp packaging/INSTALL.md packaging/INSTALL.ja.md packaging/config.example.json packaging/nginx-hostdiary.conf.example \
     README.md LICENSE "$dir/"
-  chmod 0644 "$dir"/INSTALL.ja.md "$dir"/config.example.json "$dir"/nginx-hostdiary.conf.example \
+  chmod 0644 "$dir"/INSTALL.md "$dir"/INSTALL.ja.md "$dir"/config.example.json "$dir"/nginx-hostdiary.conf.example \
     "$dir"/README.md "$dir"/LICENSE
-  (cd "$dir" && sha hostdiary INSTALL.ja.md config.example.json nginx-hostdiary.conf.example \
+  (cd "$dir" && sha hostdiary INSTALL.md INSTALL.ja.md config.example.json nginx-hostdiary.conf.example \
     README.md LICENSE > SHA256SUMS && chmod 0644 SHA256SUMS)
   # 所有者は 0:0 にそろえ、作った人のユーザー名を配布物に残さない。
   # COPYFILE_DISABLE は macOS の tar が ._* の拡張属性ファイルを入れないようにする
