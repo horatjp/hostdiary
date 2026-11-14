@@ -1,0 +1,93 @@
+/* A quiet instrument panel: blue ink, cool paper, and a shared time axis. */
+:root {
+  color-scheme: light;
+  --paper: #eef3f8;
+  --surface: #ffffff;
+  --ink: #18314d;
+  --muted: #53677f;
+  --line: #d5dfe9;
+  --blue: #245ac6;
+  --teal: #087d87;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font: 15px/1.5 "Avenir Next", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+.masthead {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 28px max(24px, calc((100vw - 1440px) / 2));
+  background: var(--surface); border-top: 5px solid var(--blue); border-bottom: 1px solid var(--line);
+}
+.wordmark { margin: 0 0 3px; color: var(--blue); font: 600 14px var(--mono); letter-spacing: .05em; }
+h1 { font-size: clamp(22px, 3vw, 32px); font-weight: 600; letter-spacing: -.025em; margin: 0; overflow-wrap: anywhere; }
+.collection { display: grid; gap: 2px; text-align: right; }
+.collection-label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.collection time { font: 14px/1.7 var(--mono); }
+.timezone { font-size: 12px; color: var(--muted); }
+main { max-width: 1488px; margin: auto; padding: 24px; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+fieldset { display: flex; flex-wrap: wrap; gap: 2px; padding: 0; border: 0; margin: 0; align-items: center; }
+legend { float: left; margin-right: 14px; color: var(--muted); font-weight: 600; }
+fieldset label { position: relative; cursor: pointer; }
+fieldset input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+fieldset span { display: block; padding: 8px 16px; border: 1px solid var(--line); background: var(--surface); border-radius: 4px; }
+fieldset input:checked + span { background: var(--blue); border-color: var(--blue); color: white; }
+fieldset input:focus-visible + span, a:focus-visible, summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+#status { font: 12px/1.5 var(--mono); color: var(--muted); margin: 0; }
+.notice { background: var(--surface); border-left: 3px solid var(--teal); padding: 14px 20px; margin: 0 0 24px; overflow-wrap: anywhere; }
+.notice h2 { font-size: 15px; margin: 0 0 8px; }
+.notice ul { padding-left: 20px; margin: 0; }
+ul.notice { padding-left: 36px; }
+.groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.group { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; scroll-margin-top: 16px; }
+.contents { margin-bottom: 24px; padding: 14px 20px; background: var(--surface); border: 1px solid var(--line); }
+.contents h2 { margin: 0 0 8px; font-size: 15px; }
+.contents ul { display: flex; flex-wrap: wrap; gap: 8px 24px; list-style: none; margin: 0; padding: 0; }
+.contents li { min-width: 0; overflow-wrap: anywhere; }
+.group-heading { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: baseline; padding: 18px 20px 10px; border-left: 3px solid var(--blue); }
+.group h2 { margin: 0; font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
+.group h3 { margin: 16px 20px 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.chart-note { margin: 12px 20px; font-size: 12px; color: var(--muted); }
+.boot-note { margin: 12px 20px; font-size: 12px; color: var(--muted); }
+.boot-swatch { display: inline-block; width: 18px; border-top: 1px dashed var(--muted); margin-right: 6px; vertical-align: middle; }
+.stopped { color: var(--muted); font: 11px/1.5 var(--mono); }
+.chart { margin: 8px 12px; min-height: 250px; border: 1px solid #dce0e4; background: #f7f8f9; }
+.chart .uplot { font-family: var(--mono); font-size: 11px; }
+.stats-wrap { margin: 8px 20px; overflow-x: auto; }
+.stats { width: 100%; border-collapse: collapse; font: 11px/1.7 var(--mono); font-variant-numeric: tabular-nums; }
+.stats caption { text-align: left; color: var(--muted); padding-bottom: 6px; }
+.stats th, .stats td { padding: 4px 7px; border-top: 1px solid var(--line); text-align: right; white-space: nowrap; }
+.stats th:first-child { text-align: left; }
+.stats th { font-weight: 500; }
+.swatch { display: inline-block; width: 9px; height: 9px; margin-right: 6px; }
+.group details { padding: 12px 20px; border-top: 1px solid var(--line); font-size: 12px; }
+summary { cursor: pointer; color: var(--muted); }
+.group details table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.group details caption { text-align: left; color: var(--muted); padding-bottom: 8px; }
+.group details th, .group details td { text-align: left; vertical-align: top; padding: 6px 8px 6px 0; border-top: 1px solid var(--line); }
+.group details th { font-weight: 600; }
+.group details td:last-child { color: var(--muted); }
+.latest { font-family: var(--mono); white-space: nowrap; }
+.directory-usage { grid-column: 1 / -1; }
+.directory-table { padding: 12px 20px; overflow-x: auto; }
+.directory-table table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.directory-table caption { text-align: left; padding-bottom: 10px; color: var(--muted); }
+.directory-table th, .directory-table td { padding: 8px; text-align: left; border-top: 1px solid var(--line); }
+.directory-table th[scope="row"] { overflow-wrap: anywhere; min-width: 180px; font-family: var(--mono); }
+.traffic { margin: 8px 20px; font: 12px/1.5 var(--mono); overflow-wrap: anywhere; }
+footer { max-width: 1488px; margin: auto; padding: 4px 24px 28px; color: var(--muted); font-size: 12px; }
+a { color: var(--blue); }
+[hidden] { display: none !important; }
+@media (max-width: 1000px) { .groups { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .masthead { align-items: flex-start; flex-direction: column; gap: 16px; padding: 20px 16px; }
+  .collection { text-align: left; }
+  main { padding: 20px 12px; }
+  fieldset span { padding: 8px 11px; }
+  .group-heading { padding: 14px 12px 8px; }
+  .chart { margin: 8px 4px; }
+  .stats-wrap { margin: 8px; }
+  .group details { padding: 12px; overflow-x: auto; }
+}

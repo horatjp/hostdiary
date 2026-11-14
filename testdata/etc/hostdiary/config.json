@@ -1,0 +1,1 @@
+{"hostname":"fixture-host","apps":{"worker":["worker (one)"]},"disk":{"exclude":["/","/space disk"]}}

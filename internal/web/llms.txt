@@ -1,0 +1,116 @@
+# hostdiary data — guide for AI readers
+
+hostdiary is a resource diary for ONE Linux host: minute-by-minute measurements,
+daily summaries and browser graphs in the HotSaNIC style. This directory is its
+public output, collected from procfs. AI-first means JSON and this guide for an
+external AI, not an embedded AI or API call. It records measurements, OOM kills,
+observed application starts, gaps, directory changes (by comparing daily lists)
+and estimated boots. It does not record reasons, service health or logs. hostdiary
+applies no thresholds, makes no normal/abnormal judgement and sends no alerts:
+deciding what matters is the reader's job.
+
+## Read in this order
+
+1. `index.json` — host name, `generated_at` (time of the last collection, Unix
+   seconds), `boots` (estimated boot times), `unavailable` (sources that could
+   not be read in the last collection) and `groups`. Each group has `columns`,
+   `units` and English `descriptions`, `last_seen`, the UTC `days` with minute
+   files, and coarse files. Network groups also have a monthly traffic estimate.
+2. `summary.json` — for every retained UTC day and group: `rows`, `first`,
+   `last`, `missing_minutes`, `gaps`, and per column `count`, `min`/`min_time`,
+   `max`/`max_time`, `mean` (and `sum` for `mem.oom_kills` and `app.started`).
+   Start a health check here instead of scanning every minute file.
+3. `data/1m/<UTC-date>/<group>.jsonl` — one-minute rows for the newest eight
+   UTC days. Open these to look at a specific time range found in step 2.
+4. `data/5m/<UTC-month>/`, `data/1h/<UTC-month>/`, `data/1d/<UTC-year>/` —
+   coarse values for longer periods (the newest 3 month files, 25 month files,
+   and three year files respectively).
+5. `data/dirs/<UTC-date>.json` — the newest 31 daily directory usage lists, when enabled.
+
+Minute data and its summaries cover the newest eight UTC day directories (more
+while rollup is failing). Past boots cover the last 1095 days (about 3 years),
+including the cutoff; the current boot is kept even when older. Daily values use
+three year files, so their retained period is not the same as the boot window.
+
+Files ending in `.js` mirror the JSON for the offline browser view; ignore them.
+
+## Questions and where to look
+
+| Question | Where to look |
+|---|---|
+| When did this host reboot? | `index.json` → `boots`: estimated recorded boots, limited by retention, missing observations and state loss. |
+| What happened last night? | Convert the local window to UTC. Use retained `summary.json` days/groups, then matching `data/1m` files. If minute files are gone, use indexed coarse files. |
+| How does this compare with last week? | Compare matching windows in retained minute or coarse files, checking units, samples and nulls. For directory changes compare the same path in retained dirs files; absence is not zero. |
+| Why did it happen? | Reasons, service health and logs are not recorded. Use these numbers as evidence, then consult external logs. |
+
+## JSONL format
+
+A line starting with `{` is a header: `columns` and `units` apply to the array
+lines that follow, until the next header. A line starting with `[` is a row:
+`[time, value, ...]`. Match values to columns by position under the header that
+precedes them, never by a fixed column order. Skip lines that are not valid JSON.
+
+Coarse rows are `[time, samples, last_time, c1, c1_max, c2, c2_max, ...]`:
+`time` is the START of the interval, `c` is the mean and `c_max` the maximum of
+the minute values in it, `samples` the number of minute rows.
+The browser shows coarse OOM kills as a mean and a maximum, not a total. For AI
+calculations, `oom_kills`/`started` mean times samples is only an approximate
+interval total: samples is not the per-column non-null count, and means are
+rounded to three decimals. A positive OOM maximum indicates kills even when
+the mean rounds to zero.
+
+## Rules that are easy to get wrong
+
+- Days are UTC. Convert to local time only for display.
+- No row means no data for that minute (collection stopped, skipped or failed).
+  It does not mean zero. `missing_minutes` and `gaps` in summary.json count
+  minute slots without a row.
+- `null` means "could not be read or calculated". It is not zero. Rates are
+  null on the first collection after a boot or after a gap longer than 180 s.
+- Units ending in `/s` are PER SECOND. A row holds the average rate since the
+  previous valid collection (normally about 60 s earlier; null when that
+  interval is over 180 s). Multiply by 60 for an approximate count per minute.
+  summary.json keeps the original units and never rescales them.
+- `count` columns are mostly states at the moment of collection (processes,
+  connections, inodes). Only `mem.oom_kills` and `app.started` count events
+  since the previous collection; their daily total is `sum` in summary.json.
+- Maxima of different columns can come from different minutes: never add
+  maxima together (for example CPU columns, or used_max + avail_max).
+- `mem.oom_kills` includes kills caused by cgroup memory limits; compare it with
+  `mem.available` before concluding the host ran out of memory.
+- `net.rx_drops` also counts frames without a protocol handler; it is not
+  end-to-end packet loss. `tcp.retrans_segs / tcp.out_segs` is a retransmission
+  ratio, not a packet loss rate.
+- RSS sums per application count shared memory again for every process.
+- A day with `"status": "partial"` in summary.json is today and still growing;
+  compare its `expected_minutes` (minutes elapsed so far) with `rows`.
+  `"future"` means the host clock was ahead when the day was written.
+- `"complete"` only means a past UTC day; it does not guarantee a day without
+  gaps or nulls. Check missing_minutes and per-column count. An absent day, group or column
+  is not zero: it may be outside retention, unreadable or not collected.
+- `boots` lists boots that hostdiary observed. A boot missing from the list is
+  not proof that the host did not reboot. The last entry is the last recorded
+  boot, not necessarily the current boot: if boot identity or uptime could not
+  be read after a reboot, an earlier boot can remain last for up to 1095 days.
+  Losing, corrupting or being unable to read private state.json loses this
+  history; only the current observation restarts it. Expired history cannot be
+  recovered by extending retention. Same-boot estimates remain fixed.
+- An old `generated_at` may mean collection stopped or that you are reading an
+  old copy. Check the source's freshness before drawing a conclusion. A group
+  whose `last_seen` is older than `generated_at` has no newer recorded row;
+  it may have disappeared or failed collection. This is not a service-health check.
+
+## Suggested health check
+
+1. Check `generated_at` in index.json and the freshness of the source or copy.
+   Do not conclude that collection stopped solely from an old copied index.
+2. In summary.json, look at `missing_minutes` per day and group.
+3. Look for non-zero `max` in error and event columns: `oom_kills`,
+   `rx_errors`, `rx_drops`, `tx_errors`, `tx_drops`.
+4. Compare `min` of `mem.available`, `max` of `psi` columns, `max` of
+   `diskio.busy` and the latest `disk.avail` with earlier days; use `min_time`
+   and `max_time` to open the matching minute file for details.
+5. Report numbers with their units and UTC/local times, and say which values
+   were null or missing.
+
+The full format specification is docs/data-format.md in the hostdiary source.

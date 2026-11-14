@@ -1,0 +1,24 @@
+[Unit]
+Description=Measure hostdiary directory usage
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/local/bin/hostdiary dirs
+TimeoutStartSec=30min
+SuccessExitStatus=75
+StateDirectory=hostdiary
+StateDirectoryMode=0755
+ProtectSystem=strict
+NoNewPrivileges=yes
+IPAddressDeny=any
+RestrictAddressFamilies=AF_UNIX
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+LockPersonality=yes
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH
+Nice=19
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+MemoryMax=256M
+Environment=GOMEMLIMIT=200MiB

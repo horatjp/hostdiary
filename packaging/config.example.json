@@ -1,0 +1,11 @@
+{
+  "hostname": "",
+  "apps": {
+    "nginx": ["nginx"],
+    "php-fpm": ["php-fpm8.2", "php-fpm"]
+  },
+  "net": {"include": [], "exclude": []},
+  "disk": {"include": [], "exclude": []},
+  "diskio": {"include": [], "exclude": []},
+  "dirs": {"enabled": true}
+}

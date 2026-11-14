@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="page.windowTitle">hostdiary · Resource history</title>
+  <link rel="stylesheet" href="assets/vendor/uplot-1.6.32/uPlot.min.css">
+  <link rel="stylesheet" href="assets/app.css">
+  <script defer src="assets/vendor/uplot-1.6.32/uPlot.iife.min.js"></script>
+  <script defer src="assets/i18n.js"></script>
+  <script defer src="assets/views.js"></script>
+  <script defer src="assets/app.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="identity"><p class="wordmark">hostdiary</p><h1 id="host" data-i18n="page.title">Resource history</h1></div>
+    <div class="collection"><span class="collection-label" data-i18n="page.collected">Last collected</span><time id="collected" data-i18n="page.unavailable">Not available</time><span class="collection-label" data-i18n="page.lastBoot">Last recorded boot (estimated)</span><time id="last-boot" data-i18n="page.unavailable">Not available</time><span class="timezone" data-i18n="page.timezone">Times shown in your browser's time zone; 2-year observations use UTC days</span></div>
+  </header>
+  <main>
+    <div class="toolbar">
+      <fieldset id="period"><legend data-i18n="page.history">History</legend>
+        <label><input type="radio" name="period" value="3600"><span data-i18n="period.3600">1 hour</span></label>
+        <label><input type="radio" name="period" value="86400" checked><span data-i18n="period.86400">1 day</span></label>
+        <label><input type="radio" name="period" value="604800"><span data-i18n="period.604800">1 week</span></label>
+        <label><input type="radio" name="period" value="2678400"><span data-i18n="period.2678400">1 month</span></label>
+        <label><input type="radio" name="period" value="31536000"><span data-i18n="period.31536000">1 year</span></label>
+        <label><input type="radio" name="period" value="63072000"><span data-i18n="period.63072000">2 years</span></label>
+      </fieldset>
+      <p id="status" role="status" data-i18n="status.index">Loading collection index…</p>
+    </div>
+    <nav id="contents" class="contents" aria-labelledby="contents-title" hidden><h2 id="contents-title" data-i18n="page.contents">Contents</h2><ul id="contents-list"></ul></nav>
+    <section id="unavailable" class="notice" hidden><h2 data-i18n="page.items">Unavailable items</h2><ul id="unavailable-list"></ul></section>
+    <ul id="load-errors" class="notice" role="alert" hidden></ul>
+    <div id="groups" class="groups"></div>
+    <div id="directories" class="groups" hidden></div>
+    <noscript><p class="notice">Enable JavaScript to view resource history. リソース履歴を表示するには JavaScript を有効にしてください。</p></noscript>
+  </main>
+  <footer>hostdiary · <span data-i18n="page.footer">Collected history, without thresholds or alerts.</span> <a href="assets/vendor/uplot-1.6.32/LICENSE" data-i18n="page.license">uPlot license</a></footer>
+</body>
+</html>

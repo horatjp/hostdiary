@@ -1,0 +1,21 @@
+[Unit]
+Description=Collect hostdiary resource history
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/local/bin/hostdiary collect
+TimeoutStartSec=50s
+SuccessExitStatus=75
+StateDirectory=hostdiary
+StateDirectoryMode=0755
+ProtectSystem=strict
+PrivateTmp=yes
+NoNewPrivileges=yes
+IPAddressDeny=any
+RestrictAddressFamilies=AF_UNIX
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+LockPersonality=yes
+CapabilityBoundingSet=CAP_SYS_PTRACE CAP_DAC_READ_SEARCH

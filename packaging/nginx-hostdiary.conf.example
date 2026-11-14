@@ -1,0 +1,18 @@
+# hostdiary を nginx の Basic 認証の内側で見せる設定例。
+# 既存の HTTPS の server { ... } の中に置く(または include する)。
+# パスワードファイルは公開する木の外に、普段の手順で作る。
+# ここで add_header を書くと、親(server・http)の add_header は引き継がれない。
+# HSTS など server で付けているヘッダーがあれば、ここにも書き足す。
+
+location = /hostdiary {
+    return 308 /hostdiary/;
+}
+
+location ^~ /hostdiary/ {
+    alias /var/lib/hostdiary/public/;
+    auth_basic "Resource history";
+    auth_basic_user_file /etc/nginx/hostdiary.htpasswd;
+    add_header Cache-Control "no-cache" always;
+    add_header Cross-Origin-Resource-Policy same-origin always;
+    autoindex off;
+}

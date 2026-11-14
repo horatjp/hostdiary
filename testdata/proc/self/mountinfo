@@ -1,0 +1,5 @@
+10 1 8:1 / / rw - ext4 /dev/sda1 rw
+11 1 8:1 / /longer rw - ext4 /dev/sda1 rw
+12 1 0:20 / /remote rw - nfs remote:/export rw
+13 1 8:2 /sub /bind rw - ext4 /dev/sda2 rw
+14 1 8:3 / /space\040disk rw - xfs /dev/sdb1 rw

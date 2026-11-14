@@ -1,0 +1,11 @@
+[Unit]
+Description=Measure hostdiary directory usage daily
+
+[Timer]
+OnCalendar=*-*-* 04:30:00
+Persistent=true
+RandomizedDelaySec=10min
+Unit=hostdiary-dirs.service
+
+[Install]
+WantedBy=timers.target
